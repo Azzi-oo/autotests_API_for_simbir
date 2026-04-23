@@ -1,16 +1,18 @@
-"""HTTP-клиент, возвращающий десериализованные модели Pydantic.
+"""HTTP-клиент сервиса — транспортный слой.
 
-Каждый вызов обернут в шаг Allure, поэтому в отчете отображаются тела запроса и ответа,
-а не только названия тестов.
+Каждый вызов обёрнут в шаг Allure, тело запроса и ответа попадают в отчёт.
+Типизированные методы возвращают Pydantic-модели, сырые методы (`raw_*`)
+используются в негативных тестах, где нужен контроль над статусом и телом.
 """
 from __future__ import annotations
 
 import os
+from typing import Any
 
 import allure
 import requests
 
-from tests.models import (
+from tests.core.models import (
     EntityListResponse,
     EntityRequest,
     EntityResponse,
@@ -58,7 +60,7 @@ class ApiClient:
         title: str | None = None,
         verified: bool | None = None,
     ) -> EntityListResponse:
-        params: dict[str, object] = {"page": page, "perPage": per_page}
+        params: dict[str, Any] = {"page": page, "perPage": per_page}
         if title is not None:
             params["title"] = title
         if verified is not None:
@@ -78,7 +80,7 @@ class ApiClient:
             response = self.session.patch(
                 self._url(f"/api/patch/{entity_id}"), json=payload, timeout=self.timeout
             )
-            self._attach("response", f"HTTP {response.status_code}")
+            self._attach("response", f"HTTP {response.status_code}\n{response.text}")
             assert response.status_code == 204, (
                 f"expected 204, got {response.status_code}: {response.text}"
             )
@@ -92,3 +94,29 @@ class ApiClient:
             assert response.status_code == 204, (
                 f"expected 204, got {response.status_code}: {response.text}"
             )
+
+    def raw_get(self, path: str) -> requests.Response:
+        with allure.step(f"GET {path} (raw)"):
+            response = self.session.get(self._url(path), timeout=self.timeout)
+            self._attach("response", f"HTTP {response.status_code}\n{response.text}")
+            return response
+
+    def raw_delete(self, path: str) -> requests.Response:
+        with allure.step(f"DELETE {path} (raw)"):
+            response = self.session.delete(self._url(path), timeout=self.timeout)
+            self._attach("response", f"HTTP {response.status_code}\n{response.text}")
+            return response
+
+    def raw_patch(self, path: str, json_body: Any) -> requests.Response:
+        with allure.step(f"PATCH {path} (raw)"):
+            self._attach("request", str(json_body))
+            response = self.session.patch(self._url(path), json=json_body, timeout=self.timeout)
+            self._attach("response", f"HTTP {response.status_code}\n{response.text}")
+            return response
+
+    def raw_post(self, path: str, json_body: Any) -> requests.Response:
+        with allure.step(f"POST {path} (raw)"):
+            self._attach("request", str(json_body))
+            response = self.session.post(self._url(path), json=json_body, timeout=self.timeout)
+            self._attach("response", f"HTTP {response.status_code}\n{response.text}")
+            return response

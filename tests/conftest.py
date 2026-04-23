@@ -1,19 +1,23 @@
 """Общие фикстуры.
 
-Сервис не имеет функций управления арендой/очистки, и тесты выполняются параллельно
-с pytest-xdist, поэтому каждый тест владеет созданными им сущностями и удаляет их
-при завершении работы. Ни один тест не зависит от идентификаторов, созданных другим тестом.
+Тесты владеют своими сущностями: фикстура `created_entity` удаляет сущность
+после теста. Это нужно, так как сервис не даёт изоляции (нет аренды/транзакций),
+а прогон параллелится через pytest-xdist, и шаринг id между тестами был бы
+источником гонок.
+
+Слои: `core/` — транспорт/контракты/билдеры/ассерты. `positive/` и `negative/` —
+сценарии. Маркеры задаются здесь, чтобы каждый тест-модуль не дублировал epic.
 """
 from __future__ import annotations
 
-import uuid
 from collections.abc import Iterator
 
 import pytest
 import requests
 
-from tests.api_client import ApiClient
-from tests.models import AdditionRequest, EntityRequest
+from tests.core.api_client import ApiClient
+from tests.core.builders import entity_request
+from tests.core.models import EntityRequest
 
 
 @pytest.fixture(scope="session")
@@ -26,28 +30,19 @@ def api() -> ApiClient:
     return client
 
 
-def _unique(prefix: str) -> str:
-    return f"{prefix}-{uuid.uuid4().hex[:12]}"
+@pytest.fixture
+def new_entity() -> EntityRequest:
+    """Свежий валидный payload для POST /api/create."""
+    return entity_request()
 
 
 @pytest.fixture
-def sample_entity() -> EntityRequest:
-    return EntityRequest(
-        title=_unique("title"),
-        verified=True,
-        addition=AdditionRequest(
-            additional_info=_unique("info"),
-            additional_number=42,
-        ),
-        important_numbers=[1, 2, 3, 5, 8, 13],
-    )
-
-
-@pytest.fixture
-def created_entity(api: ApiClient, sample_entity: EntityRequest) -> Iterator[int]:
-    entity_id = api.create(sample_entity)
+def created_entity(api: ApiClient, new_entity: EntityRequest) -> Iterator[int]:
+    """Создаёт сущность, возвращает её id и убирает её в teardown."""
+    entity_id = api.create(new_entity)
     yield entity_id
     try:
         api.delete(entity_id)
     except Exception:
+        # Тест мог удалить сущность сам — teardown должен быть идемпотентным.
         pass

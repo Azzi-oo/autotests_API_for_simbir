@@ -1,2 +1,0 @@
-HTTP 200
-{"entity":[{"id":18,"title":"title-5a5c016b7fd0","verified":true,"addition":{"id":18,"additional_info":"info-312109c0c884","additional_number":42},"important_numbers":[1,2,3,5,8,13]}],"page":1,"perPage":50}

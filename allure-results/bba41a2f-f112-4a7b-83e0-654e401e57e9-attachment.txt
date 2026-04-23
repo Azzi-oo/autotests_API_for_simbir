@@ -1,2 +1,0 @@
-HTTP 200
-{"id":15,"title":"patched-b3970d518806","verified":false,"addition":{"id":15,"additional_info":"patched-info-fe4acb445979","additional_number":777},"important_numbers":[100,200,300]}
