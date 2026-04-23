@@ -54,7 +54,7 @@ def addition_request(**overrides: Any) -> AdditionRequest:
 
 
 def entity_request(**overrides: Any) -> EntityRequest:
-    """Валидная случайная сущность. Передайте kwargs для фиксации полей."""
+    """Валидная случайная сущность. Передает kwargs для фиксации полей."""
     payload: dict[str, Any] = {
         "title": random_slug("title"),
         "verified": random.choice([True, False]),

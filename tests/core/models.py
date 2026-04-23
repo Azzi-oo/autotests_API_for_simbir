@@ -43,7 +43,7 @@ class EntityListResponse(_Strict):
     """Реальная форма GET /api/getAll.
 
     Swagger обещает голый массив, но сервис оборачивает ответ в объект
-    с пагинацией. Тесты сверяются с фактическим поведением.
+    с пагинацией. Тесты сверяются с фактическим результатом.
     """
 
     entity: list[EntityResponse] = Field(default_factory=list)

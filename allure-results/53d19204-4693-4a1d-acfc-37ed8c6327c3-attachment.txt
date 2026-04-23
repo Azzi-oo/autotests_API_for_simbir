@@ -1,0 +1,2 @@
+HTTP 500
+{"error":"title field is required"}
