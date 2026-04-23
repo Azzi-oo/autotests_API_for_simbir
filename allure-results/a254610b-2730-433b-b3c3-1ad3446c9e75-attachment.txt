@@ -1,0 +1,2 @@
+HTTP 200
+{"id":14,"title":"title-f0f188aa521b","verified":true,"addition":{"id":14,"additional_info":"info-012d88b3cc3b","additional_number":42},"important_numbers":[1,2,3,5,8,13]}
