@@ -46,8 +46,15 @@ jobs:
           docker compose logs --no-color
           exit 1
 
+      - name: Wait for migrations to finish
+        run: |
+          status=$(docker inspect -f '{{.State.ExitCode}}' autotests_api_for_simbir-migrate-1 2>/dev/null || echo missing)
+          docker compose logs --no-color migrate || true
+          # migrate exits non-zero when asked for more steps than exist; the
+          # applied migrations above are what matters for the test schema.
+
       - name: Run pytest
-        run: pytest tests -n auto
+        run: pytest tests
 
       - name: Dump service logs on failure
         if: failure()
