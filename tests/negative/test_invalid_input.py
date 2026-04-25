@@ -1,4 +1,4 @@
-"""Negative: некорректные входные данные."""
+"""Negative: некорректные тесты."""
 from __future__ import annotations
 
 import allure

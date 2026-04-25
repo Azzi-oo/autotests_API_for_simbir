@@ -11,8 +11,7 @@
     entity_request(verified=True)           # переопределён только verified
     entity_request(title="fixed-title")     # фиксированный заголовок
 
-Подход соответствует рекомендациям pytest-сообщества и идиомам xUnit
-(см. "xUnit Test Patterns", M. Meszaros, главы Object Mother / Test Data Builder).
+Подход соответствует рекомендациям pytest-сообщества
 """
 from __future__ import annotations
 

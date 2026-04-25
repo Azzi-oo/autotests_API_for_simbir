@@ -44,5 +44,4 @@ def created_entity(api: ApiClient, new_entity: EntityRequest) -> Iterator[int]:
     try:
         api.delete(entity_id)
     except Exception:
-        # Тест мог удалить сущность сам — teardown должен быть идемпотентным.
         pass
