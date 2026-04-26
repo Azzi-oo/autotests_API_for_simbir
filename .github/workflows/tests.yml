@@ -34,14 +34,28 @@ jobs:
 
       - name: Wait for service to become healthy
         run: |
-          for i in $(seq 1 60); do
-            if curl -fsS "${BASE_URL}/api/getAll" >/dev/null; then
-              echo "service is up"
+          wait_for_service() {
+            for i in $(seq 1 30); do
+              if curl -fsS "${BASE_URL}/api/getAll" >/dev/null; then
+                echo "service is up"
+                return 0
+              fi
+              sleep 2
+            done
+            return 1
+          }
+
+          for attempt in 1 2 3; do
+            if wait_for_service; then
               exit 0
             fi
-            sleep 2
+            echo "attempt ${attempt}: service did not respond, restarting service container" >&2
+            docker compose ps
+            docker compose logs --no-color service || true
+            docker compose up -d --force-recreate --no-deps service
           done
-          echo "service did not become healthy in time" >&2
+
+          echo "service did not become healthy after retries" >&2
           docker compose ps
           docker compose logs --no-color
           exit 1
