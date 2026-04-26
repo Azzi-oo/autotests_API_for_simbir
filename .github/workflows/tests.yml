@@ -29,6 +29,21 @@ jobs:
       - name: Install test dependencies
         run: pip install -r tests/requirements.txt
 
+      - name: Write compose .env
+        # docker-compose.yaml substitutes ${HTTP_PORT}/${POSTGRES_*} and the
+        # service container reads .env via env_file. The repo no longer commits
+        # .env, so CI recreates it with the same non-secret test defaults.
+        run: |
+          cat > .env <<'EOF'
+          POSTGRES_USER=test
+          POSTGRES_PASSWORD=test
+          POSTGRES_DB=test
+          POSTGRES_HOST=postgres
+          POSTGRES_PORT=5432
+          HTTP_PORT=8080
+          LOGGER_FORMAT=json
+          EOF
+
       - name: Start service stack
         run: docker compose up --build -d
 
