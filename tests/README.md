@@ -1,37 +1,59 @@
 # API tests
 
-Python 3.10 + `requests` + `pydantic` + `pytest` integration tests for the Go service
-exposed at `http://localhost:8080`.
+Python 3.10+ / `requests` / `pydantic` / `pytest` интеграционные тесты
+Go-сервиса на `http://localhost:8080`.
 
-## Run the service
+## Архитектура
 
-```bash
-make run   # or: docker compose up --build -d
+```
+tests/
+├── conftest.py             
+├── pytest.ini              
+├── core/                    
+│   ├── api_client.py        
+│   ├── models.py            
+│   ├── builders.py          
+│   └── assertions.py        
+├── positive/                
+│   ├── test_create.py
+│   ├── test_read.py
+│   ├── test_update.py
+│   └── test_delete.py
+└── negative/                
+    ├── test_not_found.py
+    └── test_invalid_input.py
 ```
 
-## Install dependencies
+## Запуск сервиса
 
 ```bash
-python3.10 -m venv .venv
+make run   # или: docker compose up --build -d
+```
+
+## Установка зависимостей
+
+```bash
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r tests/requirements.txt
 ```
 
-## Run the tests
+## Запуск тестов
 
 ```bash
-# sequential
+# всё
 pytest tests
 
-# parallel (pytest-xdist)
+pytest tests -m positive
+pytest tests -m negative
+
 pytest tests -n auto
 
-# Allure report
 pytest tests
 allure serve allure-results
 ```
 
-Override the target host with `BASE_URL`:
+Адрес сервиса переопределяется переменной `BASE_URL`:
 
 ```bash
 BASE_URL=http://localhost:8080 pytest tests
