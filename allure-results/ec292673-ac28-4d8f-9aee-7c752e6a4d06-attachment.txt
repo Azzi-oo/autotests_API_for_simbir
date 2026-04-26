@@ -1,2 +1,0 @@
-HTTP 200
-{"id":86,"title":"title-6afb43f27903","verified":false,"addition":{"id":86,"additional_info":"dghgby yklmefp ruiple","additional_number":6044},"important_numbers":[-734,86,534,-86,-93,418,-582]}

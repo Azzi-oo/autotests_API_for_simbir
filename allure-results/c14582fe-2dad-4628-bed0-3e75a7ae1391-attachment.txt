@@ -1,2 +1,0 @@
-HTTP 400
-{"error":"unable to check for existence of such id [no rows in result set]"}

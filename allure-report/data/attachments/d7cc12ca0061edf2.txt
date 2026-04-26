@@ -1,2 +1,0 @@
-HTTP 200
-{"id":74,"title":"title-610f91c74bc0","verified":false,"addition":{"id":74,"additional_info":"rowppl engrbpht cvfj","additional_number":4957},"important_numbers":[1000000,-1000000]}

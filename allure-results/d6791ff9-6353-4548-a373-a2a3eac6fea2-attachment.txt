@@ -1,2 +1,0 @@
-HTTP 200
-{"entity":[],"page":1,"perPage":1}

@@ -1,2 +1,0 @@
-HTTP 500
-{"error":"no rows in result set"}

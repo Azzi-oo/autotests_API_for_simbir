@@ -1,2 +1,0 @@
-HTTP 200
-{"id":76,"title":"title-44be8a947b57","verified":true,"addition":{"id":76,"additional_info":"rqc ivlaasq uem","additional_number":1940},"important_numbers":[231,-613,-735,546,-947,273,-237,-870]}
